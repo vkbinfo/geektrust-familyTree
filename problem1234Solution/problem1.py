@@ -4,8 +4,6 @@ from familyTree import FamilyTree
 from family import Family
 
 
-# TODO make test cases for all files
-
 class Problem1:
     @staticmethod
     def get_relation_function(x):
