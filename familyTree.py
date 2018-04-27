@@ -33,7 +33,7 @@ class FamilyTree:
             {"from_family": True, "name": "Chika", "sex": "F", "parent": "Vich"},
             {"from_family": True, "name": "Satvy", "sex": "F", "parent": "Satya"},
             {"from_family": True, "name": "Savya", "sex": "M", "parent": "Satya"},
-            {"from_family": True,"name": "Saayan", "sex": "M", "parent": "Satya"},
+            {"from_family": True, "name": "Saayan", "sex": "M", "parent": "Satya"},
             # Spouses of second Generation
             {"from_family": False, "name": "Jaya", "sex": "F", "partner_name": "Drita"},
             {"from_family": False, "name": "Jnki", "sex": "F", "partner_name": "Vila"},
@@ -44,12 +44,12 @@ class FamilyTree:
             # Third Generation
             {"from_family": True, "name": "Jata", "sex": "M", "parent": "Drita"},
             {"from_family": True, "name": "Driya", "sex": "F", "parent": "Drita"},
-            {"from_family": True, "name": "Lavnya", "sex": "F", "parent": "Vila"},
+            {"from_family": True, "name": "Lavanya", "sex": "F", "parent": "Vila"},
             {"from_family": True, "name": "Kriya", "sex": "M", "parent": "Savya"},
             {"from_family": True, "name": "Misa", "sex": "M", "parent": "Saayan"},
             # Spouses of Third Generation
             {"from_family": False, "name": "Mnu", "sex": "M", "partner_name": "Driya"},
-            {"from_family": False, "name": "Gru", "sex": "M", "partner_name": "Lavnya"}
+            {"from_family": False, "name": "Gru", "sex": "M", "partner_name": "Lavanya"}
         ]
 
         # let's add all the new members into family
@@ -59,7 +59,6 @@ class FamilyTree:
                 FamilyTree.add_person_to_family(family, new_person)
             else:
                 FamilyTree.add_spouse_to_family_member(family, new_person)
-        FamilyTree.print_family_members(family.members)
         return family
 
     @staticmethod
@@ -82,12 +81,3 @@ class FamilyTree:
         spouse = Person(spouse['name'], spouse['sex'])
         family.marriage_of_a_family_member(member, spouse)
 
-    @staticmethod
-    def print_family_members(family_member_list):
-        """
-        print family members
-        :param family_member_list: list of family members
-        """
-        print("what")
-        for member in family_member_list:
-            print(member.name + " generation " + str(member.generation))

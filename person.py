@@ -3,7 +3,6 @@ class Person:
     """
     information about person his parents, sister and brother
     """
-    # TODO adds these relations after family creation or new child with the Relation class functions
     brothers = []
     sisters = []
 

@@ -39,6 +39,7 @@ class Family:
         :param child_name: new child name, which is going to be added in family
         :param sex: child sex
         """
+        what = len(self.members)
         parent = self.find_member_by_name(parent_name)
         if parent is None:
             print("No person name " + parent_name)
