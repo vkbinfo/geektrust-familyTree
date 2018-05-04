@@ -1,6 +1,5 @@
 from person import Person
 from family import Family
-from utility import Utility
 
 
 class FamilyTree:
@@ -58,6 +57,7 @@ class FamilyTree:
                 # add person/child to family
                 FamilyTree.add_person_to_family(family, new_person)
             else:
+                # add's a spouse of family member to the family tree
                 FamilyTree.add_spouse_to_family_member(family, new_person)
         return family
 

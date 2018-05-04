@@ -1,5 +1,4 @@
 from person import Person
-from utility import Utility
 
 
 class Family:
@@ -39,7 +38,6 @@ class Family:
         :param child_name: new child name, which is going to be added in family
         :param sex: child sex
         """
-        what = len(self.members)
         parent = self.find_member_by_name(parent_name)
         if parent is None:
             print("No person name " + parent_name)
@@ -48,12 +46,26 @@ class Family:
         if parent.sex == "M":
             child = Person(child_name, sex, mother=parent.spouse, father=parent)
             child.generation = parent.generation + 1
-            Utility.connect_new_born_to_parent(child, [parent, parent.spouse])
+            Family.connect_new_born_to_parent(child, [parent, parent.spouse])
         else:
             child = Person(child_name, sex, mother=parent, father=parent.spouse)
             child.generation = parent.generation + 1
-            Utility.connect_new_born_to_parent(child, [parent, parent.spouse])
+            Family.connect_new_born_to_parent(child, [parent, parent.spouse])
         self.add_member_in_family(child)
+
+    @staticmethod
+    def connect_new_born_to_parent(child, parents):
+        """
+        Connects a child(a Person object) to its parents(adding into sons and daughters list)
+        :param child: Child who is going to get added into list of sons or daughters
+        :param parents: list of parents of child
+        """
+        if child.sex == "M":
+            for parent in parents:
+                parent.sons.append(child)
+        else:
+            for parent in parents:
+                parent.daughters.append(child)
 
     def add_member_in_family(self, new_member):
         """
@@ -74,38 +86,6 @@ class Family:
         return None
 
     @staticmethod
-    def get_brothers(person):
-        """
-        gets a list of brothers of given person
-        :param person: person an Instance of Person
-        :return: a list of brothers(Instances of Person Class) of given person
-        """
-        if person is None:
-            return []
-        brothers_list = []
-        if person.father:
-            brothers_list = person.father.sons.copy()
-            if person in brothers_list:
-                brothers_list.remove(person)
-        return brothers_list
-
-    @staticmethod
-    def get_sisters(person):
-        """
-        gets a list of sisters of given person
-        :param person: person an Instance of  Person Class
-        :return: a list of sisters(Instances of Person Class) of given person
-        """
-        if person is None:
-            return []
-        sisters_list = []
-        if person.father:
-            sisters_list = person.father.daughters.copy()
-            if person in sisters_list:
-                sisters_list.remove(person)
-        return sisters_list
-
-    @staticmethod
     def get_brother_in_laws(person):
         """
         :param person: person an Instance of Person class
@@ -116,10 +96,10 @@ class Family:
         brother_in_laws = []
         # brother-in_laws are spouse's brothers and husbands of siblings(girl siblings)
         # get spouse's brothers
-        spouse_brothers = Family.get_brothers(person.spouse)
+        spouse_brothers = Person.get_brothers(person.spouse)
         brother_in_laws.extend(spouse_brothers)
         # husbands of siblings
-        girl_siblings = Family.get_sisters(person)
+        girl_siblings = Person.get_sisters(person)
         for girl in girl_siblings:
             if girl.spouse:
                 brother_in_laws.append(girl.spouse)
@@ -136,92 +116,52 @@ class Family:
         sister_in_laws = []
         # brother-in_laws are spouse's brothers and husbands of siblings(girl siblings)
         # get spouse's brothers
-        spouse_sisters = Family.get_sisters(person.spouse)
+        spouse_sisters = Person.get_sisters(person.spouse)
         sister_in_laws.extend(spouse_sisters)
         # husbands of siblings
-        boy_siblings = Family.get_brothers(person)
+        boy_siblings = Person.get_brothers(person)
         for boy in boy_siblings:
             if boy.spouse:
                 sister_in_laws.append(boy.spouse)
         return sister_in_laws
 
     @staticmethod
-    def get_paternal_uncles(person):
+    def get_uncles(person, parent):
         """
         :param person: person an Instance of Person class
-        :return: a list of person objects of paternal uncles of given person
+        :param parent: Either mother or father instance, so according to that either
+        we will get paternal aunt to maternal aunts
+        :return: a list of person objects of uncles of given person(either maternal or paternal)
         """
         if person is None:
             return []
         # paternal uncles are father's brothers and fathers's brother-in-law's
-        paternal_uncles = []
-        if person.father and person.father.father:
-            fathers_brother = Family.get_brothers(person.father)
-            paternal_uncles.extend(fathers_brother)
-        fathers_brother_in_laws = Family.get_brother_in_laws(person.father)
-        paternal_uncles.extend(fathers_brother_in_laws)
-        return paternal_uncles
+        uncles = []
+        if parent and parent.father:
+            parent_brothers = Person.get_brothers(parent)
+            uncles.extend(parent_brothers)
+        parent_brother_in_laws = Family.get_brother_in_laws(parent)
+        uncles.extend(parent_brother_in_laws)
+        return uncles
 
     @staticmethod
-    def get_maternal_uncles(person):
+    def get_aunt(person, parent):
         """
-        :param person: person an Instance of Person class
-        :return: a list of person objects of maternal uncles of given person
-        """
-        if person is None:
-            return []
-        # maternal uncles are mother's brothers and mother's brother-in-law's
-        maternal_uncles = []
-        if person.mother and person.mother.father:
-            mothers_brother = Family.get_brothers(person.mother)
-            maternal_uncles.extend(mothers_brother)
-        mothers_brother_in_laws = Family.get_brother_in_laws(person.mother)
-        maternal_uncles.extend(mothers_brother_in_laws)
-        return maternal_uncles
-
-    @staticmethod
-    def get_paternal_aunt(person):
-        """
-        :param person: person an Instance of Person class, that given Familys relatives are going to be retrieved
-        :return: a list of person objects of paternal aunts of given person
+        :param person: person an Instance of Person class, that given Family's relatives are going to be retrieved
+        :param parent: Either mother or father instance, so according to that either
+        we will get paternal aunt to maternal aunts
+        :return: a list of person objects of aunts of given person(either maternal or paternal)
         """
         if person is None:
             return []
         # paternal aunt are father's sisters and fathers's sister-in-law's
-        paternal_aunts = []
-        if person.father and person.father.father:
-            fathers_sisters = Family.get_sisters(person.father)
-            paternal_aunts.extend(fathers_sisters)
-        fathers_sister_in_laws = Family.get_sister_in_laws(person.father)
-        paternal_aunts.extend(fathers_sister_in_laws)
-        return paternal_aunts
-
-    @staticmethod
-    def get_maternal_aunt(person):
-        """
-        :param person: person an Instance of Person class, that given Familys relatives are going to be retrieved
-        :return: a list of person objects of maternal aunts of that given person
-        """
-        if person is None:
-            return []
-        # maternal aunt are mother's sisters and mother's sister-in-law's
-        maternal_aunts = []
-        if person.mother and person.mother.father:
-            mother_sisters = Family.get_sisters(person.mother)
-            maternal_aunts.extend(mother_sisters)
-        mother_sister_in_laws = Family.get_sister_in_laws(person.mother)
-        maternal_aunts.extend(mother_sister_in_laws)
-        return maternal_aunts
-
-    @staticmethod
-    def get_children(person):
-        """
-        :param person: person an Instance of Person class, that given Familys relatives are going to be retrieved
-        :return: a list of person objects of children of that given person
-        """
-        if person is None:
-            return []
-        return person.sons + person.daughters
+        aunts = []
+        if parent and parent.father:
+            sisters = Person.get_sisters(parent)
+            aunts.extend(sisters)
+        sister_in_laws = Family.get_sister_in_laws(parent)
+        aunts.extend(sister_in_laws)
+        return aunts
 
     @staticmethod
     def get_cousins(person):
@@ -234,38 +174,10 @@ class Family:
         mother = person.mother
         father = person.father
         cousins = []
-        mother_sibling = Family.get_brothers(mother) + Family.get_sisters(mother)
+        mother_sibling = Person.get_brothers(mother) + Person.get_sisters(mother)
         for sibling in mother_sibling:
-            cousins.extend(Family.get_children(sibling))
-        father_sibling = Family.get_brothers(father) + Family.get_sisters(father)
+            cousins.extend(Person.get_children(sibling))
+        father_sibling = Person.get_brothers(father) + Person.get_sisters(father)
         for sibling in father_sibling:
-            cousins.extend(Family.get_children(sibling))
+            cousins.extend(Person.get_children(sibling))
         return cousins
-
-    @staticmethod
-    def get_grand_daughter(person):
-        offsprings = person.sons + person.daughters
-        grand_daughters = []
-        for person in offsprings:
-            grand_daughters.extend(person.daughters)
-        return grand_daughters
-
-    @staticmethod
-    def get_mother(person):
-        if person.mother:
-            return [person.mother]
-        return []
-
-    @staticmethod
-    def get_father(person):
-        if person.father:
-            return [person.father]
-        return []
-
-    @staticmethod
-    def get_sons(person):
-        return person.sons
-
-    @staticmethod
-    def get_daughters(person):
-        return person.daughters

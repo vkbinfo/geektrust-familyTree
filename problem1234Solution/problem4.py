@@ -40,13 +40,13 @@ class Problem4:
                 return "Father"
             if person.mother == relative:
                 return "Mother"
-            if relative in family.get_paternal_uncles(person):
+            if relative in family.get_uncles(person, person.father):
                 return "Paternal Uncle"
-            if relative in family.get_paternal_aunt(person):
+            if relative in family.get_aunt(person, person.father):
                 return "Paternal Aunt"
-            if relative in family.get_maternal_uncles(person):
+            if relative in family.get_uncles(person, person.mother):
                 return "Maternal Uncle"
-            if relative in family.get_maternal_aunt(person):
+            if relative in family.get_aunt(person, person.mother):
                 return "Maternal Aunt"
             if person in family.get_grand_daughter(relative):
                 return "Grand Father"
@@ -56,8 +56,8 @@ class Problem4:
                     return "Son"
                 else:
                     return "Daughter"
-            uncle_aunt_list = family.get_paternal_uncles(relative) + family.get_paternal_aunt(relative) + \
-                              family.get_maternal_uncles(relative) + family.get_maternal_aunt(relative)
+            uncle_aunt_list = family.get_uncles(relative, relative.father) + family.get_aunt(relative, relative.father) + \
+                              family.get_uncles(relative, relative.mother) + family.get_aunt(relative, relative.mother)
             if person in uncle_aunt_list:
                 if relative.sex == "M":
                     return "Nephew"
